@@ -258,8 +258,10 @@ html.sandin body{visibility:hidden}
 }
 .lore::before{top:-5px}.lore::after{bottom:-5px}
 @media (max-width:860px){.lore{padding:30px 22px;margin-bottom:50px}}
+html.hs .page-head h1{opacity:0}
 </style>
 <script>try{if(sessionStorage.getItem('sandIn')){sessionStorage.removeItem('sandIn');document.documentElement.classList.add('sandin');setTimeout(function(){document.documentElement.classList.remove('sandin')},4500)}}catch(e){}</script>
+<script>if(!matchMedia('(prefers-reduced-motion: reduce)').matches){document.documentElement.classList.add('hs');setTimeout(function(){document.documentElement.classList.remove('hs')},4500)}</script>
 <script src="sand.js" defer></script>
 </head>
 <body>
@@ -346,7 +348,7 @@ burger.addEventListener('click',()=>{
 (()=>{
   const c=document.getElementById('fx'),x=c.getContext('2d');
   const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
-  let w,h,dpr,puffs=[],embers=[],sand=[],tt=0;
+  let w,h,dpr,puffs=[],embers=[],sand=[],tt=0,mx=-1e4,my=-1e4,mvx=0,mvy=0;
   const rnd=(a,b)=>a+Math.random()*(b-a);
   // мягкое облако пыли: рисуется один раз, дальше копируется
   const puffS=(()=>{const o=document.createElement('canvas');o.width=o.height=256;const g=o.getContext('2d'),gr=g.createRadialGradient(128,128,0,128,128,128);
@@ -360,7 +362,7 @@ burger.addEventListener('click',()=>{
     // песчинки: чем ниже, тем их больше
     sand=Array.from({length:Math.min(420,Math.round(innerWidth/4.5))},()=>({
       x:rnd(0,w),y:h*(1-Math.pow(Math.random(),2.2)),
-      s:rnd(.7,1.8)*dpr,v:rnd(.25,1.1)*dpr,ph:rnd(0,6.28),amp:rnd(.08,.4)*dpr}));
+      s:rnd(.7,1.8)*dpr,v:rnd(.25,1.1)*dpr,ph:rnd(0,6.28),amp:rnd(.08,.4)*dpr,kx:0,ky:0}));
   }
   function mk(any){
     return {x:rnd(0,w),y:any?rnd(0,h):h+10,r:rnd(.6,1.9)*dpr,vy:rnd(.1,.45)*dpr,vx:rnd(-.1,.25)*dpr,a:rnd(.15,.7),t:rnd(0,6.28)};
@@ -382,17 +384,31 @@ burger.addEventListener('click',()=>{
     }
     tt+=.016;
     const gust=1+.5*Math.sin(tt*.5);
+    const R=150*dpr,RR=R*R;mvx*=.88;mvy*=.88;
     x.fillStyle='rgb(238,198,108)';
     for(const p of sand){
       const depth=p.y/h;
       p.x+=p.v*gust*(.5+depth);p.ph+=.02;p.y+=Math.sin(p.ph)*p.amp;
-      if(p.x>w+5)p.x=-5;
+      // песчинки разлетаются от курсора, как от дуновения
+      if(mx>-1e3){
+        const dx=p.x-mx,dy=p.y-my,d2=dx*dx+dy*dy;
+        if(d2<RR){const d=Math.sqrt(d2)||1,k=1-d/R;p.kx+=dx/d*k*k*4.5*dpr+mvx*k*.12;p.ky+=dy/d*k*k*4.5*dpr+mvy*k*.12}
+      }
+      p.x+=p.kx;p.y+=p.ky;p.kx*=.94;p.ky*=.94;
+      if(p.x>w+5)p.x=-5;else if(p.x<-6)p.x=w+6;
+      if(p.y<-6)p.y=h+6;else if(p.y>h+6)p.y=-6;
       x.globalAlpha=.1+.55*depth*depth;
       x.fillRect(p.x,p.y,p.s,p.s);
     }
     x.globalAlpha=1;
     if(!reduce)requestAnimationFrame(draw);
   }
+  addEventListener('pointermove',e=>{
+    const nx=e.clientX*dpr,ny=e.clientY*dpr;
+    if(mx>-1e3){mvx=mvx*.5+(nx-mx)*.5;mvy=mvy*.5+(ny-my)*.5}
+    mx=nx;my=ny;
+  },{passive:true});
+  document.addEventListener('mouseleave',()=>{mx=-1e4;my=-1e4});
   addEventListener('resize',init);
   init();draw();
 })();
