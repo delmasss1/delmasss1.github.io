@@ -208,7 +208,7 @@
     svg=document.createElementNS(NS,'svg');
     svg.setAttribute('class','hs');svg.setAttribute('aria-hidden','true');
     svg.setAttribute('viewBox','0 0 2400 200');
-    svg.innerHTML='<defs><linearGradient id="hsShine" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="320" y2="0">'
+    svg.innerHTML='<defs><linearGradient id="hsShine" gradientUnits="userSpaceOnUse" gradientTransform="translate(-420 0)" x1="0" y1="0" x2="320" y2="0">'
       +'<stop offset="0" stop-color="#f3efe9"/><stop offset=".38" stop-color="#f3efe9"/>'
       +'<stop offset=".5" stop-color="#fff4b8"/><stop offset=".57" stop-color="#ffd447"/>'
       +'<stop offset=".7" stop-color="#f3efe9"/><stop offset="1" stop-color="#f3efe9"/>'
@@ -248,7 +248,6 @@
 
 /* ---- свой курсор: золотая точка и песчаный ореол, при наведении на ссылки расширяется ---- */
 (()=>{
-  const reduceC=matchMedia('(prefers-reduced-motion: reduce)').matches;
   const root=document.documentElement;
   const st=document.createElement('style');
   st.textContent=`
@@ -267,11 +266,16 @@ html.cc,html.cc *{cursor:none!important}
   cur.innerHTML='<i class="ring"></i><i class="dot"></i>';
   root.appendChild(cur);
   const ring=cur.children[0],dot=cur.children[1];
-  let x=-100,y=-100,rx=-100,ry=-100,seen=false;
+  let x=-100,y=-100,seen=false;
+  function place(){
+    const m='translate3d('+x+'px,'+y+'px,0)';
+    ring.style.transform=m;dot.style.transform=m;
+  }
   addEventListener('pointermove',e=>{
     if(e.pointerType==='touch')return;
     x=e.clientX;y=e.clientY;
-    if(!seen){seen=true;rx=x;ry=y;cur.classList.remove('hide');root.classList.add('cc')}
+    if(!seen){seen=true;cur.classList.remove('hide');root.classList.add('cc')}
+    place();                      // сразу, без отставания
     const t=e.target;
     cur.classList.toggle('hov',!!(t&&t.closest&&t.closest('a,button,[role=button],#intro')));
   },{passive:true});
@@ -279,10 +283,4 @@ html.cc,html.cc *{cursor:none!important}
   addEventListener('mouseup',()=>cur.classList.remove('down'));
   document.addEventListener('mouseleave',()=>cur.classList.add('hide'));
   document.addEventListener('mouseenter',()=>{if(seen)cur.classList.remove('hide')});
-  (function loop(){
-    const k=reduceC?1:.2;rx+=(x-rx)*k;ry+=(y-ry)*k;
-    ring.style.transform='translate3d('+rx+'px,'+ry+'px,0)';
-    dot.style.transform='translate3d('+x+'px,'+y+'px,0)';
-    requestAnimationFrame(loop);
-  })();
 })();
