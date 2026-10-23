@@ -155,10 +155,6 @@ a{color:inherit;text-decoration:none}
   font-size:clamp(24px,2.7vw,34px);font-weight:700;line-height:1.15;color:#e9cf93;
   transition:color .7s ease,text-shadow .7s ease;
 }
-.info h2::before,.who h2::before{
-  content:"";display:block;width:46px;height:3px;margin-bottom:20px;
-  background:var(--fire);box-shadow:0 0 12px rgba(242,194,48,.8);
-}
 .info p{margin-top:0;max-width:680px;color:var(--muted);font-size:clamp(16px,1.4vw,18px);line-height:1.75}
 .tech.on .info h2,.tech.on .who h2{color:#ffe7a0;text-shadow:0 0 24px rgba(242,194,48,.55)}
 
@@ -261,6 +257,9 @@ footer{position:relative;z-index:1;text-align:center;padding:28px;color:#6f675f;
 }
 html.sandin{background:radial-gradient(ellipse at 50% 45%,#a97d36,#7d5a24 55%,#3b280e)}
 html.sandin body{visibility:hidden}
+/* раздел «Друзья Клана»: тот же оформление, но в синем свете */
+.friends{margin-top:clamp(110px,16vh,180px);filter:hue-rotate(170deg) saturate(1.3)}
+.glow,.dust{will-change:filter}
 </style>
 <script>try{if(sessionStorage.getItem('sandIn')){sessionStorage.removeItem('sandIn');document.documentElement.classList.add('sandin');setTimeout(function(){document.documentElement.classList.remove('sandin')},4500)}}catch(e){}</script>
 <script src="sand.js" defer></script>
@@ -296,7 +295,7 @@ html.sandin body{visibility:hidden}
       <h1>Легенды клана</h1>
     </div>
     <blockquote class="lore">
-      <p>«Имена великих не уходят в небытие — они навечно вплетены в летопись Сабаку-но. Их поступки стали прочным фундаментом нашей цитадели, а их воля продолжает жить в каждом вздохе пустыни, напоминая потомкам о тех, чья сила и мудрость возвели клан на вершину величия.»</p>
+      <p>«Имена великих не уходят в небытие — они навечно вплетены в летопись Сабаку-но. Их поступки стали прочным фундаментом нашей цитадели, а их воля продолжает жить в каждом вздохе пустыни, напоминая потомкам о тех, чья сила и мудрость возвели клан на вершину величия»</p>
     </blockquote>
     <div class="techs" id="techs">
       <div class="sep" aria-hidden="true"></div>
@@ -324,7 +323,37 @@ html.sandin body{visibility:hidden}
       <div class="who"><h2>Сабаку-но Ичиро (Старший)</h2></div>
       <div class="info"><p>Один из самых разносторонних и авторитетных лидеров в истории нашего рода, принявший бразды правления кланом после великого Кайдо. За свою долгую службу он успел побывать как грозным капитаном АНБУ, так и мудрым советником Казекаге, определяя судьбу всей деревни. Ичиро обладал глубокими познаниями в науке, будучи заместителем Роналдо в медицинском отделе Суны, что позволило ему совместить в себе жёсткую дисциплину спецотрядов, прагматизм учёного и гений великого дипломата.</p></div>
     </article>
+    <div class="sep" aria-hidden="true"></div>
+    <article class="tech">
+      <div class="who"><h2>Сабаку-но Куро</h2></div>
+      <div class="info"><p>Одна из самых ярких и харизматичных личностей в истории нашего рода, занявшая достойное место в летописи клана. Он прославился как прирождённый наставник и куратор, долгие годы успешно руководивший Академией шиноби и воспитавший не одно поколение образцовых бойцов Сунагакуре. Куро всегда выделялся своим взрывным, провокационным характером и неподражаемым стилем, однако за его вызывающим поведением всегда скрывались безграничная преданность своему делу и острый, проницательный ум.</p></div>
+    </article>
+    <div class="sep" aria-hidden="true"></div>
+    <article class="tech">
+      <div class="who"><h2>Сабаку-но Рамос</h2></div>
+      <div class="info"><p>Один из самых преданных шиноби клана. Он добровольно взял на себя тяжёлую должность, которую никто не хотел занимать, и возглавил отдел распределения миссий Суны. На этом посту Рамос делал всё возможное, грамотно подбирая задания для бойцов деревни. Кроме того, он запомнился как главный мотиватор клана, чей сильный дух и нужные слова всегда поднимали боевой настрой соклановцев.</p></div>
+    </article>
     </div>
+      <section class="friends" id="friends">
+      <div class="page-head">
+        <h1>Друзья Клана</h1>
+      </div>
+      <blockquote class="lore">
+        <p>«Связанные нерушимыми узами верности и общих целей. Друзья клана Сабаку-но — это те, кто доказал свою преданность делом, разделив с нами тяготы пустыни и радость побед. Мы высоко ценим тех, кто идёт с нами плечом к плечу, и готовы подставить свой несокрушимый песчаный щит под любой удар, направленный на наших союзников»</p>
+      </blockquote>
+      <div class="techs">
+        <div class="sep" aria-hidden="true"></div>
+    <article class="tech">
+      <div class="who"><h2>Сул Каракури (Старший)</h2></div>
+      <div class="info"><p>Один из старейшин и бывший глава дружественного клана Каракури. В тяжёлые времена великих войн он сражался бок о бок с Сабаку-но против Конохи и других врагов, оказывая нашему роду неоценимую поддержку. Сул вошёл в историю как уникальный мастер: несмотря на то, что его клан славился кукольным искусством, сам он долгое время оставался одним из лучших бойцов тайдзюцу. Однако, вдохновившись примером своего предшественника, он, так же как и Юкуламодзука, полностью превратил собственное тело в боевую марионетку ради бессмертия и идеального контроля. В зависимости от ситуации на поле боя он непредсказуемо менял свой стиль, сочетая механический ближний бой с разрушительным ниндзюцу, а в некоторых битвах, к огромному удивлению врагов, мог внезапно применить и редчайший геном магнетизма.</p></div>
+    </article>
+    <div class="sep" aria-hidden="true"></div>
+    <article class="tech">
+      <div class="who"><h2>Юкуламодзука Каракури</h2></div>
+      <div class="info"><p>Один из величайших мастеров генома магнетизма, а также бывший глава и старейшина союзного клана Каракури. Он заслужил почёт и уважение множеством боевых наград и великих достижений. Ради обретения абсолютной силы Юкуламодзука совершил невозможное — полностью превратил собственное тело в смертоносную куклу. Финалом его грандиозного пути стало восхождение к статусу легендарного Саннина Пути Змеи, чья зловещая мощь и тайные техники навсегда вписали его имя в историю.</p></div>
+    </article>
+      </div>
+    </section>
   </section>
 </main>
 
@@ -345,9 +374,11 @@ burger.addEventListener('click',()=>{
   let w,h,dpr,puffs=[],embers=[],sand=[],tt=0,mx=-1e4,my=-1e4,mvx=0,mvy=0;
   const rnd=(a,b)=>a+Math.random()*(b-a);
   // мягкое облако пыли: рисуется один раз, дальше копируется
-  const puffS=(()=>{const o=document.createElement('canvas');o.width=o.height=256;const g=o.getContext('2d'),gr=g.createRadialGradient(128,128,0,128,128,128);
-    gr.addColorStop(0,'rgba(236,196,108,1)');gr.addColorStop(.45,'rgba(220,170,80,.45)');gr.addColorStop(1,'rgba(200,150,60,0)');
-    g.fillStyle=gr;g.fillRect(0,0,256,256);return o})();
+  const mkPuff=(c0,c1,c2)=>{const o=document.createElement('canvas');o.width=o.height=256;const g=o.getContext('2d'),gr=g.createRadialGradient(128,128,0,128,128,128);
+    gr.addColorStop(0,c0);gr.addColorStop(.45,c1);gr.addColorStop(1,c2);
+    g.fillStyle=gr;g.fillRect(0,0,256,256);return o};
+  const puffS=mkPuff('rgba(236,196,108,1)','rgba(220,170,80,.45)','rgba(200,150,60,0)');
+  const puffB=mkPuff('rgba(130,200,255,1)','rgba(80,150,235,.45)','rgba(50,110,210,0)');
   function init(){
     dpr=Math.min(devicePixelRatio||1,2);
     w=c.width=innerWidth*dpr;h=c.height=innerHeight*dpr;
@@ -363,23 +394,25 @@ burger.addEventListener('click',()=>{
   }
   function draw(){
     x.clearRect(0,0,w,h);
+    const tb=window.__tb||0;
     for(const p of puffs){
       p.x+=p.vx;if(p.x-p.r>w)p.x=-p.r;
-      x.globalAlpha=p.a*(.5+p.y/h*.8);
-      x.drawImage(puffS,p.x-p.r,p.y-p.r,p.r*2,p.r*2);
+      const al=p.a*(.5+p.y/h*.8);
+      if(tb<.99){x.globalAlpha=al*(1-tb);x.drawImage(puffS,p.x-p.r,p.y-p.r,p.r*2,p.r*2)}
+      if(tb>.01){x.globalAlpha=al*tb;x.drawImage(puffB,p.x-p.r,p.y-p.r,p.r*2,p.r*2)}
     }
     x.globalAlpha=1;
     for(const e of embers){
       e.t+=.02;e.y-=e.vy;e.x+=e.vx+Math.sin(e.t)*.15*dpr;
       if(e.y<-10||e.x>w+10){Object.assign(e,mk(false));e.x=rnd(0,w)}
       const tw=.6+.4*Math.sin(e.t*2);
-      x.fillStyle=`rgba(255,${190+Math.random()*30|0},60,${e.a*tw})`;
+      x.fillStyle=`rgba(${255-135*tb|0},${((190+Math.random()*30)*(1-tb)+205*tb)|0},${60+195*tb|0},${e.a*tw})`;
       x.beginPath();x.arc(e.x,e.y,e.r,0,6.283);x.fill();
     }
     tt+=.016;
     const gust=1+.5*Math.sin(tt*.5);
     const R=150*dpr,RR=R*R;mvx*=.88;mvy*=.88;
-    x.fillStyle='rgb(238,198,108)';
+    x.fillStyle='rgb('+(238-128*tb|0)+','+(198-8*tb|0)+','+(108+147*tb|0)+')';
     for(const p of sand){
       const depth=p.y/h;
       p.x+=p.v*gust*(.5+depth);p.ph+=.02;p.y+=Math.sin(p.ph)*p.amp;
@@ -426,6 +459,8 @@ burger.addEventListener('click',()=>{
   }
   const smokeS=sprite(64,[[0,'rgba(255,214,80,1)'],[.5,'rgba(235,175,40,.5)'],[1,'rgba(220,150,20,0)']]);
   const sparkS=sprite(16,[[0,'rgba(255,245,170,1)'],[.4,'rgba(255,205,70,.8)'],[1,'rgba(255,190,40,0)']]);
+  const smokeB=sprite(64,[[0,'rgba(120,200,255,1)'],[.5,'rgba(70,150,235,.5)'],[1,'rgba(40,110,210,0)']]);
+  const sparkB=sprite(16,[[0,'rgba(225,246,255,1)'],[.4,'rgba(130,205,255,.8)'],[1,'rgba(80,170,255,0)']]);
 
   addEventListener('pointermove',e=>{
     pos={x:e.clientX,y:e.clientY};
@@ -460,12 +495,12 @@ burger.addEventListener('click',()=>{
       if(p.k===0){
         p.vx*=.985;p.vy-=.004;p.r+=p.g;
         x.globalAlpha=p.a*(1-t)*(1-t);
-        x.drawImage(smokeS,p.x-p.r,p.y-p.r,p.r*2,p.r*2);
+        x.drawImage((window.__tb>.5?smokeB:smokeS),p.x-p.r,p.y-p.r,p.r*2,p.r*2);
       }else{
         p.vx*=.97;p.vy+=.02;
         x.globalAlpha=1-t;
         const r=p.r*(1-t*.5);
-        x.drawImage(sparkS,p.x-r,p.y-r,r*2,r*2);
+        x.drawImage((window.__tb>.5?sparkB:sparkS),p.x-r,p.y-r,r*2,r*2);
       }
     }
     x.globalAlpha=1;
@@ -493,6 +528,38 @@ burger.addEventListener('click',()=>{
   addEventListener('scroll',()=>{if(!tick){tick=true;requestAnimationFrame(pick)}},{passive:true});
   addEventListener('resize',pick);addEventListener('load',pick);
   pick();
+})();
+
+// фон плавно меняется с жёлтого на синий, когда долистали до «Друзей Клана»
+(()=>{
+  const sec=document.getElementById('friends');
+  if(!sec)return;
+  const root=document.documentElement,glow=document.querySelector('.glow'),dust=document.querySelector('.dust');
+  const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let tc=0,target=0,run=false;
+  function apply(){
+    window.__tb=tc;
+    const deg=170*tc;
+    root.style.setProperty('--hue',deg+'deg');
+    const f=tc>.003?'hue-rotate('+deg+'deg) saturate('+(1+.3*tc)+')':'';
+    if(glow)glow.style.filter=f;
+    if(dust)dust.style.filter=f;
+  }
+  function step(){
+    tc+=(target-tc)*(reduce?1:.08);
+    if(Math.abs(target-tc)<.002)tc=target;
+    apply();
+    if(tc!==target)requestAnimationFrame(step);else run=false;
+  }
+  function calc(){
+    const top=sec.getBoundingClientRect().top,vh=innerHeight;
+    const u=Math.max(0,Math.min(1,(vh*.85-top)/(vh*.55)));
+    target=u*u*(3-2*u);
+    if(!run){run=true;requestAnimationFrame(step)}
+  }
+  addEventListener('scroll',calc,{passive:true});
+  addEventListener('resize',calc);
+  calc();
 })();
 </script>
 </body>

@@ -171,16 +171,15 @@
 /* ---- заголовки страниц: заголовок виден сразу, золотой контур обводит буквы и гаснет, потом блик ---- */
 (()=>{
   const root=document.documentElement;
-  const h1=document.querySelector('.page-head h1');
-  if(!h1)return;
+  const h1s=[...document.querySelectorAll('.page-head h1')];
+  if(!h1s.length)return;
   if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;
-  const txt=(h1.textContent||'').trim().toUpperCase();
   const NS='http://www.w3.org/2000/svg';
   const st=document.createElement('style');
   st.textContent=`
 .page-head h1.sv{line-height:0}
 .page-head h1 svg.hs{display:block;margin:0 auto;max-width:100%;height:auto;overflow:visible}
-.page-head h1 svg.hs text{font-family:"Onest","Segoe UI",system-ui,-apple-system,Arial,sans-serif;font-size:100px;font-weight:800;letter-spacing:-1.5px;fill:url(#hsShine);stroke:#ffd65a;stroke-width:2;stroke-linejoin:round;stroke-dasharray:800;stroke-dashoffset:800;stroke-opacity:1}
+.page-head h1 svg.hs text{font-family:"Onest","Segoe UI",system-ui,-apple-system,Arial,sans-serif;font-size:100px;font-weight:800;letter-spacing:-1.5px;stroke:#ffd65a;stroke-width:2;stroke-linejoin:round;stroke-dasharray:800;stroke-dashoffset:800;stroke-opacity:1}
 .page-head h1.go svg.hs text{animation:hstrace 1.5s ease-out forwards,hsfade .8s ease 1.5s forwards}
 .page-head h1.go svg.hs{animation:hsglow 3.2s ease both}
 @keyframes hstrace{to{stroke-dashoffset:0}}
@@ -188,62 +187,74 @@
 @keyframes hsglow{0%{filter:drop-shadow(0 0 0 rgba(255,205,70,0))}45%{filter:drop-shadow(0 0 12px rgba(255,205,70,.9))}100%{filter:drop-shadow(0 0 7px rgba(255,200,60,.4))}}`;
   document.head.appendChild(st);
 
-  let svg,tx,vbW=1,started=false,built=false;
-  function layout(){
-    tx.setAttribute('x','0');tx.setAttribute('y','0');
-    const bb=tx.getBBox(),pad=14;
-    vbW=bb.width+pad*2;
-    svg.setAttribute('viewBox','0 0 '+vbW+' '+(bb.height+pad*2));
-    tx.setAttribute('x',pad-bb.x);tx.setAttribute('y',pad-bb.y);
-    const a=svg.querySelector('#hsAnim');if(a)a.setAttribute('to',String(vbW+80));
-    size();
+  function make(h1,idx){
+    const txt=(h1.textContent||'').trim().toUpperCase();
+    let svg,tx,vbW=1,started=false,built=false;
+    function layout(){
+      tx.setAttribute('x','0');tx.setAttribute('y','0');
+      const bb=tx.getBBox(),pad=14;
+      vbW=bb.width+pad*2;
+      svg.setAttribute('viewBox','0 0 '+vbW+' '+(bb.height+pad*2));
+      tx.setAttribute('x',pad-bb.x);tx.setAttribute('y',pad-bb.y);
+      const a=svg.querySelector('#hsAnim'+idx);if(a)a.setAttribute('to',String(vbW+80));
+      size();
+    }
+    function size(){
+      if(!svg)return;
+      const fs=parseFloat(getComputedStyle(h1).fontSize)||60;
+      svg.style.width=(vbW*fs/100)+'px';
+    }
+    function build(){
+      if(built)return;built=true;
+      svg=document.createElementNS(NS,'svg');
+      svg.setAttribute('class','hs');svg.setAttribute('aria-hidden','true');
+      svg.setAttribute('viewBox','0 0 2400 200');
+      svg.innerHTML='<defs><linearGradient id="hsShine'+idx+'" gradientUnits="userSpaceOnUse" gradientTransform="translate(-420 0)" x1="0" y1="0" x2="320" y2="0">'
+        +'<stop offset="0" stop-color="#f3efe9"/><stop offset=".38" stop-color="#f3efe9"/>'
+        +'<stop offset=".5" stop-color="#fff4b8"/><stop offset=".57" stop-color="#ffd447"/>'
+        +'<stop offset=".7" stop-color="#f3efe9"/><stop offset="1" stop-color="#f3efe9"/>'
+        +'<animateTransform id="hsAnim'+idx+'" attributeName="gradientTransform" type="translate" from="-420 0" to="1000 0" dur="1.9s" begin="indefinite" fill="freeze"/>'
+        +'</linearGradient></defs>';
+      tx=document.createElementNS(NS,'text');
+      tx.textContent=txt;tx.style.fill='url(#hsShine'+idx+')';
+      svg.appendChild(tx);
+      h1.setAttribute('aria-label',h1.textContent.trim());
+      h1.textContent='';h1.classList.add('sv');h1.appendChild(svg);
+      layout();
+    }
+    const shine=()=>{try{svg.querySelector('#hsAnim'+idx).beginElement()}catch(e){}};
+    function start(){
+      if(started||!built)return;started=true;
+      h1.classList.add('go');
+      setTimeout(shine,1300);setInterval(shine,11000);
+    }
+    function begin(){
+      if(idx>0){
+        // следующие заголовки запускаются, когда до них долистали
+        if('IntersectionObserver' in window){
+          const io=new IntersectionObserver(es=>{if(es[0].isIntersecting){io.disconnect();start()}},{threshold:.6});
+          io.observe(h1);
+        }else start();
+      }else if(window.__sandRevealing){
+        addEventListener('sandrevealed',start,{once:true});
+        setTimeout(start,4800);
+      }else setTimeout(start,100);
+    }
+    return {build,begin,layout:()=>{if(built)layout()},size};
   }
-  function size(){
-    if(!svg)return;
-    const fs=parseFloat(getComputedStyle(h1).fontSize)||60;
-    svg.style.width=(vbW*fs/100)+'px';
-  }
-  function build(){
-    if(built)return;built=true;
-    svg=document.createElementNS(NS,'svg');
-    svg.setAttribute('class','hs');svg.setAttribute('aria-hidden','true');
-    svg.setAttribute('viewBox','0 0 2400 200');
-    svg.innerHTML='<defs><linearGradient id="hsShine" gradientUnits="userSpaceOnUse" gradientTransform="translate(-420 0)" x1="0" y1="0" x2="320" y2="0">'
-      +'<stop offset="0" stop-color="#f3efe9"/><stop offset=".38" stop-color="#f3efe9"/>'
-      +'<stop offset=".5" stop-color="#fff4b8"/><stop offset=".57" stop-color="#ffd447"/>'
-      +'<stop offset=".7" stop-color="#f3efe9"/><stop offset="1" stop-color="#f3efe9"/>'
-      +'<animateTransform id="hsAnim" attributeName="gradientTransform" type="translate" from="-420 0" to="1000 0" dur="1.9s" begin="indefinite" fill="freeze"/>'
-      +'</linearGradient></defs>';
-    tx=document.createElementNS(NS,'text');
-    tx.textContent=txt;
-    svg.appendChild(tx);
-    h1.setAttribute('aria-label',h1.textContent.trim());
-    h1.textContent='';h1.classList.add('sv');h1.appendChild(svg);
-    layout();
-  }
-  addEventListener('resize',size);
-  const shine=()=>{try{svg.querySelector('#hsAnim').beginElement()}catch(e){}};
-  function start(){
-    if(started||!built)return;started=true;
-    h1.classList.add('go');
-    setTimeout(shine,1300);setInterval(shine,11000);
-  }
-  function begin(){
-    if(window.__sandRevealing){
-      addEventListener('sandrevealed',start,{once:true});
-      setTimeout(start,4800);
-    }else setTimeout(start,100);
-  }
+  const insts=h1s.map(make);
+  addEventListener('resize',()=>insts.forEach(i=>i.size()));
+  const fontOk=()=>!document.fonts||!document.fonts.check||document.fonts.check('800 100px Onest','АБВ');
+  const run=()=>insts.forEach(i=>{i.build();i.begin()});
   // пока шрифт грузится, остаётся обычный заголовок: он виден сразу и ничем не скрыт
-  const ok=()=>document.fonts&&document.fonts.check&&document.fonts.check('800 100px Onest',txt);
-  if(!document.fonts||ok()){build();begin()}
+  if(fontOk())run();
   else{
     let done=false;
-    const go=()=>{if(done)return;done=true;build();begin()};
-    document.fonts.load('800 100px Onest',txt).then(go,go);
+    const go=()=>{if(done)return;done=true;run()};
+    document.fonts.load('800 100px Onest','АБВ').then(go,go);
     setTimeout(go,1200);
   }
-  if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>{if(built)layout()});
+  if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>insts.forEach(i=>i.layout()));
 })();
 
 /* ---- свой курсор: золотая точка и песчаный ореол, при наведении на ссылки расширяется ---- */
@@ -252,7 +263,7 @@
   const st=document.createElement('style');
   st.textContent=`
 html.cc,html.cc *{cursor:none!important}
-#cur{position:fixed;left:0;top:0;z-index:2147483647;pointer-events:none}
+#cur{position:fixed;left:0;top:0;z-index:2147483647;pointer-events:none;filter:hue-rotate(var(--hue,0deg))}
 #cur i{position:absolute;left:0;top:0;border-radius:50%;pointer-events:none;will-change:transform}
 #cur .dot{width:8px;height:8px;margin:-4px 0 0 -4px;background:#ffd45a;box-shadow:0 0 10px 2px rgba(255,205,70,.85);transition:width .25s,height .25s,margin .25s,opacity .25s}
 #cur .ring{width:38px;height:38px;margin:-19px 0 0 -19px;border:1px solid rgba(242,194,48,.6);background:radial-gradient(circle,rgba(242,194,48,.12),rgba(242,194,48,0) 70%);transition:width .3s,height .3s,margin .3s,border-color .3s,background .3s,opacity .3s}
